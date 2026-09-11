@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi import FastAPI, status
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 app = FastAPI()
 
@@ -134,3 +134,13 @@ def build_changes(data: ProductUpdate) -> dict[str, object]:
 #   }
 
 
+# build request from orm object
+# from_attributes=True 从对象属性读取数据，适合把SQLAIchemy ORM对象转换为响应模型
+class ProductPublic(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    price: float
+# Pydantic 默认会忽略请求中为生命的额外字段，如果希望拼写错误的时候直接报错，可以在request model里添加
+# model_config = ConfigDict(extra='forbid')
